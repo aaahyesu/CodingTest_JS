@@ -1,39 +1,34 @@
 function solution(n, w, num) {
-    let rows = Math.ceil(n / w); // 총 층 수
-    let warehouse = Array.from({ length: rows }, () => Array(w).fill(0));
+  const map = [];
+  let answer = 0;
+  let cnt = 1;
+  let x, y;
 
-    // 창고에 상자 배치
-    let boxNum = 1;
-    for (let i = 0; i < rows; i++) {
-        if (i % 2 === 0) { // 왼쪽 → 오른쪽
-            for (let j = 0; j < w && boxNum <= n; j++) {
-                warehouse[i][j] = boxNum++;
-            }
-        } else { // 오른쪽 → 왼쪽
-            for (let j = w - 1; j >= 0 && boxNum <= n; j--) {
-                warehouse[i][j] = boxNum++;
-            }
-        }
+  for (let i = 0 ; i < Math.ceil(n / w); ++i) {
+    const row = [];
+    for (let j = 0; j < w; ++j) {
+      if (cnt > n) {
+        row.push(null);
+        continue;
+      }
+
+      if (cnt === num) {
+        y = i;
+        x = Math.ceil(cnt / w) % 2 === 0 ? w - j - 1 : j;
+      }
+
+      row.push(cnt);
+      ++cnt;
     }
 
-    // num의 위치 찾기
-    let targetRow = -1, targetCol = -1;
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < w; j++) {
-            if (warehouse[i][j] === num) {
-                targetRow = i;
-                targetCol = j;
-                break;
-            }
-        }
-        if (targetRow !== -1) break;
-    }
+    if (i % 2 === 1) row.reverse();
+    map.push(row);
+  }
 
-    // 위쪽 모든 상자 개수 세기
-    let count = 0;
-    for (let i = targetRow; i < rows; i++) {
-        if (warehouse[i][targetCol] !== 0) count++;
-    }
+  while (y < map.length && map[y][x] !== null) {
+    ++answer;
+    ++y;
+  }
 
-    return count;
+  return answer;
 }
